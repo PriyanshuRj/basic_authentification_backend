@@ -1,19 +1,26 @@
-require("dotenv").config();
+require("dotenv").config({path : "./.env"});
 const express = require('express');
-const app = express();
 const MongoStore = require('connect-mongo');
-var cors = require('cors');
+require("./auth/passport")
+const cors = require('cors');
+const app = express();
+const bodyParser = require("body-parser");
+
 const port = 8000 || process.env.PORT;
 const session = require('express-session');
-const db = require('./config/mongoose');
-app.use(cors());
-app.use(express.urlencoded());
+const connect = require("./config/mongoose");
 const router = require("./routes/index.js");
+const { default: helmet } = require('helmet');
+
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(helmet());
 
 app.use(session({
     name: 'login_form',
     // TODO change the secret before deployment in production mode
-    secret: '8765r5tfhge54e47rydthg',
+    secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
     cookie: {
@@ -24,12 +31,18 @@ app.use(session({
     
     })
 }));
+
 app.use("/",router);
-app.listen(port, function(err){
-    if(err){
-        console.log(err);
-    }
-    else {
-        console.log("Server listening at port", port);
-    }
+
+connect().then(async (db) => {
+
+    app.listen(port, function(err){
+        if(err){
+            console.log(err);
+        }
+        else {
+            console.log("Server listening at port", port);
+        }
+    })
 })
+

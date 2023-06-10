@@ -1,12 +1,15 @@
-const { MongoServerError } = require('mongodb');
-const db_path = process.env.DB;
 const mongoose = require('mongoose');
-mongoose.connect(db_path);
-const db = mongoose.connection;
+const uri = process.env.DB;
 
-db.on('error',console.error.bind(console,"Error connectiong to mongodb"));
-db.once('open',function(){
-    console.log('Connected to mongodb');
-})
+module.exports = async function connect(){
+    const conn = mongoose.connect(uri, { useNewUrlParser: true });
+    const db = mongoose.connection;
 
-module.exports = db;
+
+    db.on('error',console.error.bind(console,"Error connectiong to mongodb"));
+    db.once('open',function(){
+
+        console.log('Connected to mongodb');
+
+    })
+}
