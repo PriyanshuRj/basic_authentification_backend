@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +20,8 @@
     "express-session": "^1.17.3",
     "mongodb": "^4.6.0",
     "mongoose": "^6.3.4",
-    "nodemailer": "^6.7.5"
+    "nodemailer": "^6.7.5",
+    "nodemon": "^2.0.22",
+    "twilio": "^4.11.2"
   }
 }

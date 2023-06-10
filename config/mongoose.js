@@ -1,6 +1,5 @@
 const { MongoServerError } = require('mongodb');
 const db_path = process.env.DB;
-console.log(db_path);
 const mongoose = require('mongoose');
 mongoose.connect(db_path);
 const db = mongoose.connection;

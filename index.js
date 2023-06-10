@@ -9,10 +9,11 @@ const db = require('./config/mongoose');
 app.use(cors());
 app.use(express.urlencoded());
 const router = require("./routes/index.js");
+
 app.use(session({
     name: 'login_form',
     // TODO change the secret before deployment in production mode
-    secret: 'blahsomething123456',
+    secret: '8765r5tfhge54e47rydthg',
     saveUninitialized: false,
     resave: false,
     cookie: {

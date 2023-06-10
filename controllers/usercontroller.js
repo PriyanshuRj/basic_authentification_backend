@@ -1,20 +1,9 @@
 const User = require('../model/usermodel');
 const Otp = require('../model/otp');
 const nodemailer = require('nodemailer');
-const {Suprsend} = require("@suprsend/node-sdk");
-
-const supr_client = new Suprsend("7lwkNSbZxgpwLm8bFprL", "1FYrjHzLjzDqImu7UXry");
-const distinct_id = "ihfoebsfiuegs8fg"  // Unique id of user in your application
-const user = supr_client.user.get_instance(distinct_id) // Instantiate User profile
-
-user.add_email("priyanshurajput0071109@gmail.com") // - To add Email
-
-user.add_sms("+919871348643") // - To add SMS
-
-user.add_whatsapp("+919871348643") // - To add Whatsapp
-user.set_preferred_language("en")
-const response = user.save() //save() returns promise
-response.then((res) => console.log("response", res));
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
 
 var transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -67,6 +56,19 @@ const signup = function (req, res) {
                         console.log("Mail Send");
                     }
                 });
+                try{
+
+                    client.messages
+                    .create({
+                        body:  `Dear User, Your OTP for registering to our authentication service is ${otp}`, // Plain text body,
+                        from: process.env.TWILIO_MOBILE_NUMBER,
+                        to: '+91'+mobileno
+                    })
+                    .then(message => console.log(message.sid));
+                }
+                catch(e){
+                    console.log("Error :", e)
+                }
                 res.status(200).json({ message: "User created !!" });
             }
         })
@@ -112,6 +114,39 @@ const requestotp = function (req, res) {
     }
     else {
         res.status(404).json({ message: "Please fill all the fields" });
+    }
+}
+const requestMobileOTP = function (req, res){
+    const {mobileno} = req.body;
+    if(mobileno){
+        var otp = Math.random();
+        otp = otp * 1000000;
+        otp = parseInt(otp);
+        console.log(otp);
+        Otp.deleteMany({ email: email }, function (err, foundotp) {
+            if (err) {
+                res.status(402).josn({ message: "err" });
+            }
+            else {
+                console.log('deleted older otps')
+            }
+        })
+        Otp.create({ email: email, otp: otp });
+         try{
+
+            client.messages
+            .create({
+                body:  `Dear User, Your OTP for registering to our authentication service is ${otp}`, // Plain text body,
+                from: process.env.TWILIO_MOBILE_NUMBER,
+                to: '+91'+mobileno
+            })
+            .then(message => console.log(message.sid));
+        }
+        catch(e){
+            console.log("Error :", e);
+            req.status(404).json({message: "Mobile number not found"});
+        }
+        res.status(200).json({ message: "OTP resend to the mobile number" });
     }
 }
 const login = function (req, res) {
@@ -168,9 +203,15 @@ const otpverify = function (req, res) {
                     if (err) {
                         res.status(300).json({ message: "Error occured" });
                     }
-                    founduser.verified = true;
-                    founduser.save();
-                    res.status(200).json({ message: "OTP is correct !!" });
+                    if(founduser){
+
+                        founduser.verified = true;
+                        founduser.save();
+                        res.status(200).json({ message: "OTP is correct !!" });
+                    }
+                    else {
+                        res.status(404).json({message: "User not found"})
+                    }
 
                 })
             }
@@ -187,5 +228,6 @@ module.exports = {
     signup,
     login,
     otpverify,
-    requestotp
+    requestotp,
+    requestMobileOTP
 }
