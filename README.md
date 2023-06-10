@@ -27,16 +27,28 @@ Following parameters are required :
 | Variable Name                     | Description                    |
 |-----------------------------------|--------------------------------|
 | DB                   | Path to a local mongo DB session. |
-| EMAIL_USERNAME                   | Email that sends the OTP mail to the users. |
+| EMAIL_USEREMAIL                   | Email that sends the OTP mail to the users. |
 | EMAIL_PASSWORD                   | Password to the above that sends the OTP mail to the users. |
+| PORT                             | Port at which the backend will run if not defined default is 8000. |
+| TWILIO_ACCOUNT_SID               | Account SID from your twilio account for mobile notifcation messages. |
+| TWILIO_AUTH_TOKEN                | Twilio authentification token. |
+| TWILIO_MOBILE_NUMBER             | Dummy mobile number provided by twilio. |
+| JWT_SECRET                       | Secret for encrypting JWT tokens. |
+| SESSION_SECRET                   | Sectret for encrypting session tokens. |
 
 
 An example `.env` file looks like :
 
 ```
 DB=mongodb://localhost:27017/authlog
-EMAIL_USERNAME=priyanshuauth@gmail.com
+EMAIL_USEREMAIL=priyanshuauth@gmail.com
 EMAIL_PASSWORD=Priyanshu@1234
+PORT=5000
+TWILIO_ACCOUNT_SID=JHGHIYTR876R68FT7RXTCY
+TWILIO_AUTH_TOKEN=oiy87tvr67vt7trv6uyvyubdbdytufgvut
+TWILIO_MOBILE_NUMBER=+13145627109
+JWT_SECRET=oujhi77ub89u8ui
+SESSION_SECRET=khjgiy6t86ybf8y
 ```
 
 

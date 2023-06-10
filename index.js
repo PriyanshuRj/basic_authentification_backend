@@ -1,16 +1,16 @@
 require("dotenv").config({path : "./.env"});
 const express = require('express');
 const MongoStore = require('connect-mongo');
-require("./auth/passport")
+const session = require('express-session');
+const connect = require("./config/mongoose");
+const router = require("./routes/index.js");
+const { default: helmet } = require('helmet');
+require("./auth/passport");
 const cors = require('cors');
 const app = express();
 const bodyParser = require("body-parser");
 
 const port = 8000 || process.env.PORT;
-const session = require('express-session');
-const connect = require("./config/mongoose");
-const router = require("./routes/index.js");
-const { default: helmet } = require('helmet');
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));

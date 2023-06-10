@@ -42,7 +42,7 @@ const signup = async function (req, res) {
             Otp.create({ email: email, otp: otp });
             
             const mailOptions = {
-                from: 'priyanshurajput0071109@gmail.com', // Sender address
+                from: process.env.EMAIL_USEREMAIL, // Sender address
                 to: email, // List of recipients
                 subject: 'Verification Code', // Subject line
                 text: `Dear User,\nYour OTP for registering to our authentication service is ${otp}`, // Plain text body
