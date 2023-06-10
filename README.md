@@ -27,7 +27,7 @@ Following parameters are required :
 | Variable Name                     | Description                    |
 |-----------------------------------|--------------------------------|
 | DB                   | Path to a local mongo DB session. |
-| EMAIL_USEREMAIL                   | Email that sends the OTP mail to the users. |
+| EMAIL_USEREMAIL                  | Email that sends the OTP mail to the users. |
 | EMAIL_PASSWORD                   | Password to the above that sends the OTP mail to the users. |
 | PORT                             | Port at which the backend will run if not defined default is 8000. |
 | TWILIO_ACCOUNT_SID               | Account SID from your twilio account for mobile notifcation messages. |
@@ -97,8 +97,8 @@ Content-type: application/json;
 
 Response:
 {
-    "message": "Correct credential",
-    "state":"1"
+    "message": "Successfully loged in",
+    "token": "lkhut7tb8y8ybn08t78tjkbj89guh"
 }
 ```
 

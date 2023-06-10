@@ -39,7 +39,7 @@ const signup = async function (req, res) {
                 }
             })
             
-            Otp.create({ email: email, otp: otp });
+            Otp.create({ email: email,mobileno:mobileno, otp: otp });
             
             const mailOptions = {
                 from: process.env.EMAIL_USEREMAIL, // Sender address
@@ -95,7 +95,7 @@ const requestotp = function (req, res) {
                 console.log('deleted older otps')
             }
         })
-        Otp.create({ email: email, otp: otp });
+        Otp.create({ email: email,mobileno:"", otp: otp });
         const mailOptions = {
             from: 'priyanshurajput0071109@gmail.com', // Sender address
             to: email, // List of recipients
@@ -124,7 +124,7 @@ const requestMobileOTP = function (req, res){
         otp = otp * 1000000;
         otp = parseInt(otp);
         console.log(otp);
-        Otp.deleteMany({ email: email }, function (err, foundotp) {
+        Otp.deleteMany({ mobileno: mobileno }, function (err, foundotp) {
             if (err) {
                 res.status(402).josn({ message: "err" });
             }
@@ -132,7 +132,7 @@ const requestMobileOTP = function (req, res){
                 console.log('deleted older otps')
             }
         })
-        Otp.create({ email: email, otp: otp });
+        Otp.create({ email: "",mobileno:mobileno, otp: otp });
          try{
 
             client.messages
@@ -169,7 +169,7 @@ const login = async function (req, res) {
                       process.env.JWT_SECRET
                     );
                   
-                    res.status(200).json({ message: "User found", token: jwtToken });
+                    res.status(200).json({ message: "Successfully loged in", token: jwtToken });
                 } 
                 else res.status(404).json({ message: "User not found in the data base" });
             }
@@ -217,10 +217,45 @@ const otpverify = function (req, res) {
         res.status(404).json({ message: "Please fill all the fields" });
     }
 }
+const mobileotpverify = function (req, res) {
+    const { mobileno, otp } = req.body;
+    if (mobileno && otp) {
+        Otp.findOne({ mobileno: mobileno }, function (err, foundotp) {
+            if (err) {
+                res.status(300).json({ message: "Error occured" });
+            }
+            if (!foundotp) res.status(200).json({ message: "Wrong otp" });
+            if (otp === foundotp.otp) {
+                User.findOne({ mobileno: mobileno }, function (err, founduser) {
+                    if (err) {
+                        res.status(300).json({ message: "Error occured" });
+                    }
+                    if(founduser){
+
+                        founduser.verified = true;
+                        founduser.save();
+                        res.status(200).json({ message: "OTP is correct !!" });
+                    }
+                    else {
+                        res.status(404).json({message: "User not found"})
+                    }
+
+                })
+            }
+            else {
+                res.status(200).json({ message: "OTP just entered is wrong" })
+            }
+        })
+    }
+    else {
+        res.status(404).json({ message: "Please fill all the fields" });
+    }
+}
 module.exports = {
     signup,
     login,
     otpverify,
     requestotp,
-    requestMobileOTP
+    requestMobileOTP,
+    mobileotpverify
 }
